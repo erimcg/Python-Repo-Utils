@@ -1,0 +1,63 @@
+#!/usr/bin/env python3.6
+
+import requests
+import json
+
+import os
+import sys
+
+cwd = os.getcwd()
+sys.path.append(cwd)
+import githubinfo
+token = 'token b6b5787ed265ca67690e25cb6dc8c89246d8382d' # access token to delete repos
+
+githubOrg = githubinfo.githubOrg
+githubPassword = githubinfo.githubPassword
+githubUserName = githubinfo.githubUserName
+
+print( 'Listing %s repositories' % (githubOrg))
+githubAPIListRepositories = 'https://api.github.com/orgs/%s/repos' % (githubOrg)
+r = requests.get(githubAPIListRepositories, auth=(githubUserName, githubPassword))
+print( r.status_code)
+
+if r.status_code == 200:
+	data = r.json()
+	if len(data) == 0:
+		print( 'No repositories to delete')
+	else:		
+		#print( json.dumps(r.json(), sort_keys=True, indent=4, separators=(',', ': ')))
+		for repo in data:
+			repoName = repo['name']
+			print( 'Deleting repository: %s' % (repoName))
+
+			githubAPIDeleteRepo = 'https://api.github.com/repos/%s/%s' % (githubOrg, repoName)
+			headers = {"Authorization": token}
+			r = requests.delete(githubAPIDeleteRepo, headers=headers)
+		
+			print( r.status_code)
+
+print( 'Listing %s teams' % (githubOrg))
+githubAPIListTeams = 'https://api.github.com/orgs/%s/teams' % (githubOrg)
+r = requests.get(githubAPIListTeams, auth=(githubUserName, githubPassword))
+print( r.status_code)
+
+if r.status_code == 200:
+	data = r.json()
+	if len(data) == 0:
+		print( 'No teams to delete')
+	else:		
+		#print( json.dumps(r.json(), sort_keys=True, indent=4, separators=(',', ': ')))
+		for team in data:
+			if team['name'] == 'Owners':
+				continue
+
+			teamId = team['id']
+			print( 'Deleting team: %s' % (teamId))
+
+			githubAPIDeleteTeam = 'https://api.github.com/teams/%s' % (teamId)
+			r = requests.delete(githubAPIDeleteTeam, auth=(githubUserName, githubPassword))
+
+			print( r.status_code)
+
+
+

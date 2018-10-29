@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+
+cwd = os.getcwd() 
+
+userNames = cwd + '/usernames'
+
+with open(userNames) as f:
+	userNames = f.readlines()
+
+userNames = [x.strip("\n") for x in userNames]
+
+for username in userNames:
+
+	print("changing dir: " + username)
+	dir = cwd + '/Students/' + username 
+	os.chdir(dir) 
+
+	command = 'git stash'
+	print(command)
+	os.system(command)
+
+	command = 'git pull origin master'
+	print(command)
+	os.system(command)
+

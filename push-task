@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+import sys
+
+cwd = os.getcwd() 
+masterTasksDir = cwd + '/Tasks'
+studentsDir = cwd + '/Students'
+userNamesFile = cwd + '/usernames'
+
+with open(userNamesFile) as f:
+	userNames = f.readlines()
+
+userNames = [x.strip("\n") for x in userNames]
+
+for username in userNames:
+
+	userTasksDir = studentsDir + '/' + username + '/Tasks'
+	print 'Deleting existing student Tasks directory'
+	shutil.rmtree(userTasksDir, True)
+
+	print 'Copying Tasks directory tree to students directory'
+	shutil.copytree(masterTasksDir, userTasksDir)  
+
+	studentDir = studentsDir + '/' + username
+	print 'Changing to student directory: ' + studentDir
+	os.chdir(studentDir) 
+
+	command = 'git add ' + 'Tasks'
+	print(command)
+	os.system(command)
+
+	command = 'git commit -m "Updated Tasks"' 
+	print(command)
+	os.system(command)
+
+	command = 'git push -u origin master'
+	print(command)
+	os.system(command)

@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+import json
+import sys
+
+cwd = os.getcwd() 
+sys.path.append(cwd)
+import githubinfo
+
+githubUserName = githubinfo.githubUserName
+githubPassword = githubinfo.githubPassword
+githubOrg = githubinfo.githubOrg
+
+studentsDir = cwd + '/Students'
+print('Checking if ' + studentsDir + ' exists')
+if os.path.exists(studentsDir) == False:
+	print('Creating directory: ' + studentsDir)
+	try:
+		os.mkdir(studentsDir)
+	except OSError:
+		print('Error creating directory: ' + studentsDir)
+		exit()
+	print('Directory created')
+else:
+	print('Directory already exists')
+
+print('Changing cwd: ' + studentsDir)
+os.chdir(studentsDir) 
+
+print('Reading usernames')
+userNamesFile = cwd + '/usernames'
+with open(userNamesFile) as f:
+	userNames = f.readlines()
+
+userNames = [x.strip("\n") for x in userNames]
+
+for username in userNames:
+	print('Checking if ' + username + 'exists')
+	if os.path.exists(username) == False:
+		print('Cloning repository')
+
+		repoName = username + '.git'
+		githubRepo = 'https://%s:%s@github.com/%s/%s' % (githubUserName, githubPassword, githubOrg, repoName)
+		command = 'git clone %s' % (githubRepo)
+		print(command)
+		os.system(command)
+
+		command = 'git remote add upstream %s' % (githubRepo)
+		print(command)
+		os.system(command)
+
+	else:
+		print('Repository already exists')
+		continue
+
