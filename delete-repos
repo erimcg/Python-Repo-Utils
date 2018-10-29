@@ -9,7 +9,7 @@ import sys
 cwd = os.getcwd()
 sys.path.append(cwd)
 import githubinfo
-token = 'token b6b5787ed265ca67690e25cb6dc8c89246d8382d' # access token to delete repos
+token = 'token ADD_TOKEN_HERE' # access token to delete repos
 
 githubOrg = githubinfo.githubOrg
 githubPassword = githubinfo.githubPassword
